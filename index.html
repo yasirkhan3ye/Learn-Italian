@@ -1,12 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1f2e">
+    <link rel="manifest" href="manifest.json">
     <title>Ciao! Let's Learn Italian</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <script>
         tailwind.config = {
@@ -42,24 +45,23 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .italian-gradient {
-            background: linear-gradient(90deg, #009246 0%, #FFFFFF 50%, #CE2B37 100%);
-        }
         body {
             background-color: #1a1f2e;
             color: white;
             overflow-x: hidden;
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* Custom scrollbar for better aesthetics */
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
+            width: 0px;
             background: transparent;
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
         }
     </style>
 <script type="importmap">
@@ -73,7 +75,7 @@
 }
 </script>
 </head>
-<body>
+<body class="safe-top safe-bottom">
     <div id="root"></div>
 </body>
 </html>

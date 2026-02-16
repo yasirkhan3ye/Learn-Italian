@@ -1,10 +1,11 @@
-
 import React, { useState, useMemo } from 'react';
 import Header from './components/Header';
 import VocabularyCard from './components/VocabularyCard';
+import ConversationCard from './components/ConversationCard';
 import Navbar from './components/Navbar';
 import CategoryDetail from './components/CategoryDetail';
-import { VOCABULARY_PACKS } from './constants';
+import ProgressBar from './components/ProgressBar';
+import { VOCABULARY_PACKS, CONVERSATION_PACK } from './constants';
 import { NavItem, VocabularyPack } from './types';
 
 const App: React.FC = () => {
@@ -26,73 +27,116 @@ const App: React.FC = () => {
     }
 
     return (
-      <div className="animate-in fade-in duration-500">
-        <div className="flex items-center justify-between mb-6 relative z-10 px-1">
-          <h2 className="text-2xl font-black text-white tracking-tight">Vocabulary Packs</h2>
-          <button className="text-[11px] font-black text-white hover:brightness-110 transition-all flex items-center gap-2 bg-[#00DC82] px-5 py-2 rounded-full shadow-lg shadow-[#00DC82]/20 active:scale-95">
-            View All
-            <span className="material-symbols-outlined text-sm font-black">arrow_forward</span>
-          </button>
-        </div>
+      <div className="animate-in fade-in duration-700 space-y-8">
+        <ProgressBar current={2} total={5} />
+        
+        <div className="px-1">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-black text-white/90 uppercase tracking-widest">Italian Basics</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4 relative z-10 mb-8">
+            {VOCABULARY_PACKS.map((pack) => (
+              <VocabularyCard 
+                key={pack.id} 
+                {...pack} 
+                onClick={() => setSelectedPackId(pack.id)}
+              />
+            ))}
+          </div>
 
-        <div className="grid grid-cols-2 gap-5 relative z-10 mb-8">
-          {VOCABULARY_PACKS.map((pack) => (
-            <VocabularyCard 
-              key={pack.id} 
-              {...pack} 
-              onClick={() => setSelectedPackId(pack.id)}
-            />
-          ))}
+          <h2 className="text-xl font-black text-white/90 uppercase tracking-widest mb-4">Daily Challenge</h2>
+          <ConversationCard {...CONVERSATION_PACK} />
         </div>
       </div>
     );
   };
 
+  const renderLessons = () => (
+    <div className="space-y-6 animate-in zoom-in-95 duration-500 px-1">
+      <h2 className="text-2xl font-black mb-2">My Learning Path</h2>
+      {[
+        { level: '1', title: 'The Basics', progress: 100, icon: 'looks_one', status: 'Completed' },
+        { level: '2', title: 'Home Life', progress: 40, icon: 'looks_two', status: 'In Progress' },
+        { level: '3', title: 'Food & Dining', progress: 0, icon: 'looks_3', status: 'Locked' },
+        { level: '4', title: 'Travel Essentials', progress: 0, icon: 'looks_4', status: 'Locked' },
+      ].map((lesson, idx) => (
+        <div key={idx} className={`glass-card p-6 rounded-3xl flex items-center gap-5 border transition-all ${lesson.status === 'Locked' ? 'opacity-40 grayscale' : 'border-white/10 hover:bg-white/10'}`}>
+          <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center font-black">
+            <span className="material-symbols-outlined">{lesson.icon}</span>
+          </div>
+          <div className="flex-1">
+             <div className="flex justify-between items-center mb-1">
+               <h3 className="font-bold text-lg">{lesson.title}</h3>
+               <span className="text-[10px] font-black uppercase text-green-400/80">{lesson.status}</span>
+             </div>
+             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                <div className="h-full bg-green-500" style={{width: `${lesson.progress}%`}}></div>
+             </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderProfile = () => (
+    <div className="space-y-8 animate-in slide-in-from-bottom-10 duration-500 px-1">
+      <div className="flex flex-col items-center text-center">
+        <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-green-500 via-white to-red-500 mb-4 shadow-2xl">
+           <img className="w-full h-full object-cover rounded-full border-4 border-[#1a1f2e]" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop" alt="User" />
+        </div>
+        <h2 className="text-3xl font-black">Alex Rossi</h2>
+        <p className="text-green-400 font-bold tracking-widest text-xs uppercase mt-1">Fluent Level 12</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'Streak', value: '14', icon: 'local_fire_department', color: 'text-orange-500' },
+          { label: 'Exp', value: '2.4k', icon: 'bolt', color: 'text-yellow-500' },
+          { label: 'Rank', value: '#4', icon: 'military_tech', color: 'text-blue-500' },
+        ].map((stat, i) => (
+          <div key={i} className="glass-card p-4 rounded-2xl text-center border border-white/5">
+            <span className={`material-symbols-outlined ${stat.color} mb-1 fill`}>{stat.icon}</span>
+            <div className="text-xl font-black">{stat.value}</div>
+            <div className="text-[9px] font-black uppercase text-gray-500">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-black text-lg uppercase tracking-wider text-white/50">Recent Badges</h3>
+        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+           {['trophy', 'workspace_premium', 'star', 'rocket', 'auto_awesome'].map((ach, i) => (
+             <div key={i} className="w-16 h-16 rounded-2xl glass-card flex-shrink-0 flex items-center justify-center text-yellow-500 border-yellow-500/20">
+                <span className="material-symbols-outlined text-3xl fill">{ach}</span>
+             </div>
+           ))}
+        </div>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
-      case NavItem.HOME:
-        return renderHomeContent();
-      case NavItem.LESSONS:
-        return (
-          <div className="flex flex-col items-center justify-center py-20 text-center glass-card rounded-2xl p-8 animate-in zoom-in-95 duration-300">
-            <span className="material-symbols-outlined text-6xl text-gray-500 mb-4">auto_stories</span>
-            <h2 className="text-2xl font-bold mb-2">My Lessons</h2>
-            <p className="text-gray-400 max-w-xs">Continue your journey through the Italian language. More levels coming soon.</p>
-          </div>
-        );
-      case NavItem.PROFILE:
-        return (
-          <div className="flex flex-col items-center justify-center py-20 text-center glass-card rounded-2xl p-8 animate-in zoom-in-95 duration-300">
-            <span className="material-symbols-outlined text-6xl text-gray-500 mb-4">person_celebrate</span>
-            <h2 className="text-2xl font-bold mb-2">Student Profile</h2>
-            <p className="text-gray-400 max-w-xs">View your achievements, badges, and language streaks.</p>
-          </div>
-        );
+      case NavItem.HOME: return renderHomeContent();
+      case NavItem.LESSONS: return renderLessons();
+      case NavItem.PROFILE: return renderProfile();
+      default: return null;
     }
   };
 
   const handleTabChange = (tab: NavItem) => {
     setActiveTab(tab);
-    if (tab !== NavItem.HOME) {
-      setSelectedPackId(null);
-    }
+    if (tab !== NavItem.HOME) setSelectedPackId(null);
   };
 
   return (
     <div className="min-h-screen flex flex-col antialiased bg-[#1a1f2e] text-white selection:bg-green-500/30">
       <Header />
-      
       <main className="flex-1 px-6 pb-28 pt-6 relative">
-        {/* Background Decorative Elements */}
         <div className="fixed top-0 left-[-20%] w-[80%] h-[500px] bg-green-500/5 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="fixed bottom-20 right-[-10%] w-[60%] h-[400px] bg-red-500/5 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] bg-white/5 rounded-full blur-[150px] pointer-events-none"></div>
-        
-        <div className="relative z-10 max-w-md mx-auto w-full">
-          {renderContent()}
-        </div>
+        <div className="relative z-10 max-w-md mx-auto w-full">{renderContent()}</div>
       </main>
-
       <Navbar activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );

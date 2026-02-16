@@ -1,0 +1,16 @@
+{
+  "name": "Ciao! Italian",
+  "short_name": "Ciao!",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1a1f2e",
+  "theme_color": "#1a1f2e",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/323/323300.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
