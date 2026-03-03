@@ -13,16 +13,3 @@ export interface VocabularyPack {
   icon: string;
   items: WordItem[];
 }
-
-export interface ConversationPack {
-  title: string;
-  subtitle: string;
-  imageUrl: string;
-  icon: string;
-}
-
-export enum NavItem {
-  HOME = 'HOME',
-  LESSONS = 'LESSONS',
-  PROFILE = 'PROFILE'
-}

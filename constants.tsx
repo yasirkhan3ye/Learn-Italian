@@ -498,12 +498,3 @@ export const VOCABULARY_PACKS: VocabularyPack[] = [
     ]
   }
 ];
-
-export const CONVERSATION_PACK = {
-  title: 'Conversazione',
-  subtitle: 'Basic Conversation Phrases',
-  imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1471&auto=format&fit=crop',
-  icon: 'forum'
-};
-
-export const USER_IMAGE = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop';
