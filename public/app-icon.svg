@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1f2e" />
+      <stop offset="100%" stop-color="#0d111a" />
+    </linearGradient>
+    <linearGradient id="bubbleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- App Icon Background -->
+  <rect width="512" height="512" rx="115" fill="url(#bg)" />
+  
+  <!-- Outer Glow / Ring -->
+  <rect width="512" height="512" rx="115" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4" />
+
+  <!-- Speech Bubble -->
+  <path d="M144 256C144 194.1 194.1 144 256 144C317.9 144 368 194.1 368 256C368 317.9 317.9 368 256 368C239.2 368 223.3 364.3 209 357.6L144 376L162.4 311C150.7 296.7 144 277.2 144 256Z" fill="url(#bubbleGrad)" filter="url(#shadow)" />
+  
+  <!-- Italian Flag Stripes inside the bubble -->
+  <g transform="translate(196, 216)">
+    <!-- Green -->
+    <rect x="0" y="0" width="40" height="80" rx="8" fill="#009246" />
+    <!-- White -->
+    <rect x="40" y="0" width="40" height="80" fill="#ffffff" />
+    <!-- Red -->
+    <rect x="80" y="0" width="40" height="80" rx="8" fill="#ce2b37" />
+  </g>
+</svg>

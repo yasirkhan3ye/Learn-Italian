@@ -1,0 +1,17 @@
+{
+  "name": "Ciao Italian - Learning Dashboard",
+  "short_name": "Ciao Italian",
+  "description": "Learn Italian vocabulary with AI-powered pronunciation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1f2e",
+  "theme_color": "#1a1f2e",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
