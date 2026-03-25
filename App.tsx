@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import Header from './components/Header';
 import VocabularyCard from './components/VocabularyCard';
 import CategoryDetail from './components/CategoryDetail';
+import VersionManager from './components/VersionManager';
 import { VOCABULARY_PACKS } from './constants';
 import { VocabularyPack } from './types';
 
@@ -51,6 +52,7 @@ const App: React.FC = () => {
         <div className="fixed bottom-20 right-[-10%] w-[60%] h-[400px] bg-red-500/5 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="relative z-10 max-w-md mx-auto w-full">{renderHomeContent()}</div>
       </main>
+      <VersionManager />
     </div>
   );
 };

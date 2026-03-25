@@ -1,5 +1,20 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ArrowLeft, 
+  Volume2, 
+  Check, 
+  Search, 
+  Shuffle, 
+  LayoutList, 
+  Style, 
+  ChevronLeft, 
+  ChevronRight,
+  RotateCw,
+  Trophy,
+  BrainCircuit
+} from 'lucide-react';
 import { VocabularyPack, WordItem } from '../types';
 import { GoogleGenAI } from "@google/genai";
 
@@ -83,7 +98,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
     }
     setPlayingIndex(index);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash-preview-tts",
         contents: [{ parts: [{ text: `Italian pronunciation for: ${text}` }] }],
@@ -123,8 +138,17 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
     setIsFlipped(false);
     setTimeout(() => {
       setFlashcardIndex((prev) => (prev + 1) % filteredItems.length);
-    }, 150);
+    }, 200);
   };
+
+  const handlePrevFlashcard = () => {
+    setIsFlipped(false);
+    setTimeout(() => {
+      setFlashcardIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
+    }, 200);
+  };
+
+  const isSessionComplete = completedCount === pack.items.length;
 
   return (
     <div className="animate-in slide-in-from-right-10 duration-500 pb-20">
@@ -133,13 +157,17 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={onBack} className="w-10 h-10 rounded-full glass-card flex items-center justify-center active:scale-90 transition-transform">
-              <span className="material-symbols-outlined">arrow_back</span>
+              <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
               <h2 className="text-xl font-black">{pack.title}</h2>
               <div className="flex items-center gap-2">
                 <div className="w-20 h-1 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500 transition-all duration-500" style={{width: `${progressPercentage}%`}}></div>
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercentage}%` }}
+                    className="h-full bg-green-500"
+                  />
                 </div>
                 <span className="text-[10px] font-black text-green-400 uppercase">{completedCount}/{pack.items.length}</span>
               </div>
@@ -150,14 +178,14 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
               onClick={shuffle}
               className="w-10 h-10 rounded-full glass-card flex items-center justify-center active:rotate-180 transition-transform duration-500 text-white/60"
             >
-              <span className="material-symbols-outlined text-sm">shuffle</span>
+              <Shuffle className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setViewMode(v => v === 'list' ? 'flashcard' : 'list')}
               className={`px-4 h-10 rounded-2xl glass-card flex items-center gap-2 font-black text-[10px] uppercase tracking-widest transition-all ${viewMode === 'flashcard' ? 'bg-green-500 text-white' : 'text-white/60'}`}
             >
-              <span className="material-symbols-outlined text-sm">{viewMode === 'list' ? 'style' : 'list_alt'}</span>
-              {viewMode === 'list' ? 'Flashcards' : 'List View'}
+              {viewMode === 'list' ? <BrainCircuit className="w-4 h-4" /> : <LayoutList className="w-4 h-4" />}
+              {viewMode === 'list' ? 'Practice' : 'List View'}
             </button>
           </div>
         </div>
@@ -165,7 +193,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
         {viewMode === 'list' && (
           <div className="space-y-4 px-1">
             <div className="relative">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm">search</span>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-4 h-4" />
               <input 
                 type="text"
                 placeholder={`Search in ${pack.title.toLowerCase()}...`}
@@ -199,7 +227,8 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
             const isDone = completedItems[originalIndex] ?? false;
             
             return (
-              <div 
+              <motion.div 
+                layout
                 key={originalIndex}
                 onClick={() => playPronunciation(item.italian, originalIndex)}
                 className={`glass-card p-5 rounded-3xl flex items-center justify-between transition-all active:scale-95 cursor-pointer border-l-4 ${
@@ -215,7 +244,7 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
                       }}
                       className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${isDone ? 'bg-green-500 border-green-500 text-white' : 'border-white/20 hover:border-white/40'}`}
                     >
-                      {isDone && <span className="material-symbols-outlined text-[14px] font-bold">check</span>}
+                      {isDone && <Check className="w-3.5 h-3.5" />}
                     </button>
                     <h3 className={`text-xl font-black tracking-tight ${isPlaying ? 'text-green-400' : 'text-white'}`}>{item.italian}</h3>
                   </div>
@@ -226,84 +255,137 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ pack, onBack }) => {
                   </div>
                 </div>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isPlaying ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 'bg-white/5 text-white/20'}`}>
-                  <span className="material-symbols-outlined text-xl">{isPlaying ? 'graphic_eq' : 'volume_up'}</span>
+                  {isPlaying ? <RotateCw className="w-5 h-5 animate-spin" /> : <Volume2 className="w-5 h-5" />}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
+          
+          {filteredItems.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
+              <Search className="w-12 h-12 mb-4" />
+              <p className="font-black uppercase tracking-widest text-xs">No words found</p>
+            </div>
+          )}
         </div>
       ) : (
         /* Flashcard View */
-        <div className="mt-12 flex flex-col items-center px-4">
-          <div className="w-full max-w-sm perspective-1000">
-            <div 
-              onClick={() => setIsFlipped(!isFlipped)}
-              className={`relative w-full aspect-[4/5] transition-all duration-500 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
-            >
-              {/* Front */}
-              <div className="absolute inset-0 backface-hidden glass-card rounded-[3rem] p-10 flex flex-col items-center justify-center text-center border-2 border-white/10 shadow-2xl">
-                <span className="material-symbols-outlined text-green-500/30 text-6xl mb-8">translate</span>
-                <h3 className="text-4xl font-black mb-4">{filteredItems[flashcardIndex]?.item.italian}</h3>
-                <p className="text-sm font-bold text-white/30 uppercase tracking-[0.3em]">TAP TO FLIP</p>
-                
+        <div className="mt-8 flex flex-col items-center px-4">
+          {filteredItems.length > 0 ? (
+            <>
+              <div className="w-full max-w-sm perspective-1000 relative h-[450px]">
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={flashcardIndex}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    className="w-full h-full"
+                  >
+                    <div 
+                      onClick={() => setIsFlipped(!isFlipped)}
+                      className="relative w-full h-full transition-all duration-500 transform-style-3d cursor-pointer"
+                      style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+                    >
+                      {/* Front */}
+                      <div className="absolute inset-0 backface-hidden glass-card rounded-[3rem] p-10 flex flex-col items-center justify-center text-center border-2 border-white/10 shadow-2xl">
+                        <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-20">
+                          <BrainCircuit className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase tracking-[0.3em]">Active Recall</span>
+                        </div>
+                        
+                        <h3 className="text-4xl font-black mb-4 tracking-tighter">{filteredItems[flashcardIndex]?.item.italian}</h3>
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] mt-2">Tap to flip</p>
+                        
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            playPronunciation(filteredItems[flashcardIndex]?.item.italian, filteredItems[flashcardIndex]?.originalIndex);
+                          }}
+                          className={`mt-12 w-20 h-20 rounded-full flex items-center justify-center transition-all active:scale-90 ${
+                            playingIndex === filteredItems[flashcardIndex]?.originalIndex 
+                              ? 'bg-green-500 text-white shadow-xl shadow-green-500/40' 
+                              : 'bg-white/5 text-green-400 hover:bg-white/10'
+                          }`}
+                        >
+                          {playingIndex === filteredItems[flashcardIndex]?.originalIndex 
+                            ? <RotateCw className="w-8 h-8 animate-spin" /> 
+                            : <Volume2 className="w-8 h-8" />}
+                        </button>
+                      </div>
+
+                      {/* Back */}
+                      <div className="absolute inset-0 backface-hidden rotate-y-180 glass-card rounded-[3rem] p-10 flex flex-col items-center justify-center text-center border-2 border-green-500/20 shadow-2xl bg-green-500/5">
+                        <div className="space-y-10 w-full">
+                          <div>
+                            <p className="text-[10px] font-black uppercase text-green-400 tracking-widest mb-3 opacity-60">English</p>
+                            <h3 className="text-3xl font-black tracking-tight">{filteredItems[flashcardIndex]?.item.english}</h3>
+                          </div>
+                          <div className="pt-10 border-t border-white/5">
+                            <p className="text-[10px] font-black uppercase text-green-400 tracking-widest mb-3 opacity-60">Urdu</p>
+                            <h3 className="text-4xl font-bold" dir="rtl">{filteredItems[flashcardIndex]?.item.urdu}</h3>
+                          </div>
+                        </div>
+
+                        <div className="absolute bottom-10 flex gap-4 w-full px-10">
+                           <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const idx = filteredItems[flashcardIndex]?.originalIndex;
+                              setCompletedItems(p => ({...p, [idx]: true}));
+                              handleNextFlashcard();
+                            }}
+                            className="flex-1 py-4 rounded-2xl bg-green-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-green-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                           >
+                             <Check className="w-4 h-4" />
+                             Mastered
+                           </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              <div className="mt-12 flex items-center gap-10">
                 <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playPronunciation(filteredItems[flashcardIndex]?.item.italian, filteredItems[flashcardIndex]?.originalIndex);
-                  }}
-                  className="mt-10 w-16 h-16 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all active:scale-90"
+                  onClick={handlePrevFlashcard}
+                  className="w-14 h-14 rounded-full glass-card flex items-center justify-center text-white/40 active:scale-90 transition-transform hover:text-white"
                 >
-                  <span className="material-symbols-outlined text-3xl">volume_up</span>
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl font-black text-white">
+                    {flashcardIndex + 1} <span className="text-white/20 mx-1">/</span> {filteredItems.length}
+                  </span>
+                  <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mt-1">Cards Left</p>
+                </div>
+                <button 
+                  onClick={handleNextFlashcard}
+                  className="w-14 h-14 rounded-full glass-card flex items-center justify-center text-white/40 active:scale-90 transition-transform hover:text-white"
+                >
+                  <ChevronRight className="w-6 h-6" />
                 </button>
               </div>
-
-              {/* Back */}
-              <div className="absolute inset-0 backface-hidden rotate-y-180 glass-card rounded-[3rem] p-10 flex flex-col items-center justify-center text-center border-2 border-green-500/20 shadow-2xl bg-green-500/5">
-                <div className="space-y-8 w-full">
-                  <div>
-                    <p className="text-[10px] font-black uppercase text-green-400 tracking-widest mb-2">English</p>
-                    <h3 className="text-3xl font-black">{filteredItems[flashcardIndex]?.item.english}</h3>
-                  </div>
-                  <div className="pt-8 border-t border-white/5">
-                    <p className="text-[10px] font-black uppercase text-green-400 tracking-widest mb-2">Urdu</p>
-                    <h3 className="text-4xl font-bold" dir="rtl">{filteredItems[flashcardIndex]?.item.urdu}</h3>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-10 flex gap-4">
-                   <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const idx = filteredItems[flashcardIndex]?.originalIndex;
-                      setCompletedItems(p => ({...p, [idx]: true}));
-                      handleNextFlashcard();
-                    }}
-                    className="px-6 py-3 rounded-2xl bg-green-500 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-green-500/20 active:scale-95"
-                   >
-                     Got it!
-                   </button>
-                </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-24 h-24 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
+                <Trophy className="w-12 h-12 text-green-500" />
               </div>
+              <h3 className="text-2xl font-black mb-2">Category Mastered!</h3>
+              <p className="text-white/40 text-sm mb-8 max-w-[200px]">You've learned all the words in this pack. Great job!</p>
+              <button 
+                onClick={() => {
+                  setCompletedItems({});
+                  setViewMode('list');
+                }}
+                className="px-8 py-3 rounded-2xl bg-white text-[#1a1f2e] font-black text-xs uppercase tracking-widest active:scale-95"
+              >
+                Reset Progress
+              </button>
             </div>
-          </div>
-
-          <div className="mt-10 flex items-center gap-8">
-            <button 
-              onClick={() => setFlashcardIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length)}
-              className="w-14 h-14 rounded-full glass-card flex items-center justify-center text-white/40 active:scale-90 transition-transform"
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            <span className="text-lg font-black text-white/60">
-              {flashcardIndex + 1} <span className="text-white/20 mx-1">/</span> {filteredItems.length}
-            </span>
-            <button 
-              onClick={handleNextFlashcard}
-              className="w-14 h-14 rounded-full glass-card flex items-center justify-center text-white/40 active:scale-90 transition-transform"
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
+          )}
         </div>
       )}
 
